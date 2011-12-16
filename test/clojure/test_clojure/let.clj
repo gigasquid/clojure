@@ -47,4 +47,12 @@
  (testing "destructuring map to vector error"
     (is (fails-with-cause? java.lang.Exception
           #"let cannot destructure class clojure.lang.PersistentArrayMap. Try converting it to a seq."
-          (eval '(let [[x y] {}] x))))))
+          (eval '(let [[x y] {}] x)))))
+  (testing "destructuring set to vector error"
+    (is (fails-with-cause? java.lang.Exception
+          #"let cannot destructure class clojure.lang.PersistentHashSet. Try converting it to a seq."
+          (eval '(let [[x y] #{}] x)))))
+  (testing "destructuring long to vector error"
+    (is (fails-with-cause? java.lang.Exception
+          #"let cannot destructure class java.lang.Long."
+          (eval '(let [[x y] 1] x))))))

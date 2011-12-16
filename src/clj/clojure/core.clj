@@ -3906,7 +3906,7 @@
     (instance? clojure.lang.Sequential val) :good
     :else ( if (instance? clojure.lang.IPersistentCollection  val)
             (throw (new Exception (str "let cannot destructure " (.getClass val) ". Try converting it to a seq.")))
-            (throw (new Exception (str "let cannot destructure " (.getClass val)))))))
+            (throw (new Exception (str "let cannot destructure " (.getClass val) "."))))))
 
 ;redefine let and loop  with destructuring
 (defn destructure [bindings]
