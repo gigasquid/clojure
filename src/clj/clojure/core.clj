@@ -3893,6 +3893,21 @@
   ([] (. clojure.lang.PersistentArrayMap EMPTY))
   ([& keyvals] (clojure.lang.PersistentArrayMap/createWithCheck (to-array keyvals))))
 
+(defn ^{:private true}
+  check-nth-errors [val]
+  (cond
+    (nil? val) :good
+    (symbol? val) :good
+    (instance? CharSequence val) :good
+    (-> val .getClass .isArray) :good
+    (instance? java.util.RandomAccess val) :good
+    (instance? java.util.regex.Matcher val) :good
+    (instance? java.util.Map$Entry val) :good
+    (instance? clojure.lang.Sequential val) :good
+    :else ( if (instance? clojure.lang.IPersistentCollection  val)
+            (throw (new Exception (str "let cannot destructure " (.getClass val) ". Try converting it to a seq.")))
+            (throw (new Exception (str "let cannot destructure " (.getClass val)))))))
+
 ;redefine let and loop  with destructuring
 (defn destructure [bindings]
   (let [bents (partition 2 bindings)
@@ -3904,6 +3919,7 @@
                                 n 0
                                 bs b
                                 seen-rest? false]
+                           (check-nth-errors val)
                            (if (seq bs)
                              (let [firstb (first bs)]
                                (cond
